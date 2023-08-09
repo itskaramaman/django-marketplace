@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill, Adjust
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -18,6 +21,12 @@ class Item(models.Model):
     description = models.TextField(blank=True, null=True)
     price = models.FloatField()
     image = models.ImageField(upload_to='item_images', blank=True, null=True)
+    image_thumbnail = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(100, 70)],
+        format='JPEG',
+        options={'quality': 90}
+        )
     is_sold = models.BooleanField(default=False)
     created_by = models.ForeignKey(
         User, related_name='items', on_delete=models.CASCADE)
